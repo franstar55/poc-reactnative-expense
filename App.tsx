@@ -1,13 +1,16 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from "react-native";
+import NavegadorApp from "./src/appNavigation/NavegadorApp";
+import { NavigationContainer } from "@react-navigation/native";
+import { TransaccionesProvider } from "./src/Context/TransaccionesContext";
 
 export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
+    return (
+        <TransaccionesProvider>
+            <NavigationContainer>
+                <NavegadorApp />
+            </NavigationContainer>
+        </TransaccionesProvider>
+    );
 }
 
 const styles = StyleSheet.create({
