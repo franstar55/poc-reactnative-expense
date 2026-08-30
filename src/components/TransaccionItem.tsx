@@ -7,15 +7,14 @@ import { categorias } from "../data/categorias";
 
 //TransaccionItem recibe una prop llamada item
 const TransaccionItem = ({ item }: PropsTransaccionItem) => {
-
-  const categoria = categorias.find(
-    (categoria) => categoria.id === item.categoriaId
-  );
+  const categoria = categorias.find((categoria) => categoria.id === item.categoriaId);
 
   return (
     <View style={styles.card}>
       <View style={styles.filaSuperior}>
-        <Text style={styles.categoria}>{categoria?.imagen} {categoria?.nombre}</Text>
+        <Text style={styles.categoria}>
+          {categoria?.imagen} {categoria?.nombre}
+        </Text>
         <Text style={styles.monto}>${item.monto.toLocaleString("es-AR")}</Text>
       </View>
       <Text style={styles.descripcion}>{item.descripcion}</Text>

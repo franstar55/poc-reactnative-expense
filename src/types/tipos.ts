@@ -1,9 +1,9 @@
 export type Categoria = {
   id: string;
   nombre: string;
-  tipo: "ingreso" | "gasto"
+  tipo: "ingreso" | "gasto";
   imagen: string;
-}
+};
 
 export type TipoMovimiento = "gasto" | "ingreso";
 
@@ -28,6 +28,6 @@ export type PropsTransaccionItem = {
 //array de transacciones
 //una funcion que recibe (transaccion objeto) y no devuelve nada (void)
 export type TransaccionesContextType = {
-    transacciones: Transaccion[];
-    agregarTransaccion: (transaccion: Transaccion) => void;
+  transacciones: Transaccion[];
+  agregarTransaccion: (transaccion: Transaccion) => void;
 };
