@@ -4,14 +4,21 @@ import Inicio from "../screens/Inicio";
 import Movimientos from "../screens/Movimientos";
 import Agregar from "../screens/AgregarT";
 import { Ionicons } from "@expo/vector-icons";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const Tabs = createBottomTabNavigator(); //crea navegador de pestañas inferiores
 
 function MyTabs() {
+  const insets = useSafeAreaInsets(); // Obtiene el margen seguro del dispositivo
+
   return (
     <Tabs.Navigator
       screenOptions={{
-        tabBarStyle: styles.tabBar,
+        tabBarStyle: {
+          height: 65 + insets.bottom, // Altura base + espacio de la barra de gestos
+          paddingBottom: insets.bottom > 0 ? insets.bottom : 8,
+          paddingTop: 8,
+        },
         tabBarActiveTintColor: "#4CAF50",
         tabBarInactiveTintColor: "#888",
         tabBarLabelStyle: styles.tabBarLabel,

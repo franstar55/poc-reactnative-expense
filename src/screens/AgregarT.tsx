@@ -1,46 +1,57 @@
-import { StyleSheet, Text, View, TextInput, Pressable } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  Pressable,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
+} from "react-native";
 import React, { useState, useContext } from "react";
 import { Categoria, TipoMovimiento, Transaccion } from "../types/tipos";
 import { categorias } from "../data/categorias";
 import { Ionicons } from "@expo/vector-icons";
 import { TransaccionesContext } from "../Context/TransaccionesContext";
+import { useNavigation } from "@react-navigation/native";
 
 const Agregar = () => {
-  //useState el conjunto que guarda el valor actual y la funcion para cambiarlo
-  // ej monto guarda el valor actual
-  //setMonto sirve para modificarlo
+  const navigation = useNavigation<any>();
+
+  // datos de la transaccion
   const [monto, setMonto] = useState("");
   const [descripcion, setDescripcion] = useState("");
-  const [categoriaSeleccionada, setCategoriaSeleccionada] = useState<Categoria | null>(null); //parentesis indica que inicialmente va a ser null, pero puede guardar Cat o null
-  const [tipoMovimiento, setTipoMovimiento] = useState<TipoMovimiento>("gasto"); //gastovalor inicial, TipoMovimiento indica el tipo de dato que puede guardar ese estado
-  const [mostrarCategorias, setMostrarCategorias] = useState(false); //esta variable controla si la lista de categorías está abierta o cerrada (false cerrada)
+  const [categoriaSeleccionada, setCategoriaSeleccionada] = useState<Categoria | null>(null);
+  const [tipoMovimiento, setTipoMovimiento] = useState<TipoMovimiento>("gasto");
 
-  const context = useContext(TransaccionesContext); //accede a la info de TransaccionesContext
+  // lista de categorias; false => lista cerrada
+  const [mostrarCategorias, setMostrarCategorias] = useState(false);
+
+  const context = useContext(TransaccionesContext); // accede a la info de TransaccionesContext
   if (!context) {
     return <Text>Error: Context no disponible</Text>;
   }
 
-  const { agregarTransaccion } = context; //sacamos agregarTransaccion del Context para poder usar directamente "agregarTransaccion"
+  // obtiene la funcion para agregar una nueva transaccion
+  const { agregarTransaccion } = context;
 
   const guardaCategoria = (categoria: Categoria) => {
-    setCategoriaSeleccionada(categoria); //guarda cat
+    setCategoriaSeleccionada(categoria);
   };
 
-  const categoriasFiltradas = categorias.filter(
-    //nueva lista con categorias filtradas x cond
-    (categoria) => categoria.tipo === tipoMovimiento
-  );
+  const categoriasFiltradas = categorias.filter((categoria) => categoria.tipo === tipoMovimiento);
 
   const guardarTransaccion = () => {
-    const montoNumero = Number(monto); //convierte el monto
+    const montoNumero = Number(monto);
 
-    if (!montoNumero || montoNumero <= 0) return; //verifica si el monto tiene valor valido(!montoNUmero) o si es negativo
+    // TODO: modales
+    if (Number.isNaN(montoNumero) || montoNumero <= 0) return;
     if (!categoriaSeleccionada) return;
 
+    // crear nueva transaccion
     const nuevaTransaccion: Transaccion = {
-      //crear nueva transaccion
       id: Date.now().toString(),
-      tipoMovimiento: tipoMovimiento, //guarda el tipo que eligio el usuario
+      tipoMovimiento: tipoMovimiento,
       monto: Number(monto),
       categoriaId: categoriaSeleccionada.id,
       descripcion: descripcion,
@@ -49,122 +60,137 @@ const Agregar = () => {
 
     agregarTransaccion(nuevaTransaccion); //guardamos la transaccion con la funcion del context
 
-    //resetea form luego de la creacion
+    // resetera los campos
     setMonto("");
     setDescripcion("");
     setCategoriaSeleccionada(null);
     setTipoMovimiento("gasto");
     setMostrarCategorias(false);
+
+    navigation.navigate("Inicio");
   };
 
   return (
-    <View>
-      <Text style={styles.titulo}>Registrá tus movimientos y controlá tus gastos</Text>
-
-      <View>
+    <KeyboardAvoidingView
+      style={{ flex: 1, backgroundColor: "#fff" }}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 90 : 80} // Compensa la barra de tabs y header
+    >
+      <ScrollView
+        contentContainerStyle={styles.scrollContainer}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+        automaticallyAdjustKeyboardInsets={true} // React Native moderno ajusta el scroll al foco
+      >
         <View>
-          <Text style={styles.subtitulo}>Monto</Text>
-          <TextInput
-            style={styles.contenedor}
-            placeholder="$0.00"
-            keyboardType="numeric"
-            value={monto}
-            onChangeText={setMonto}
-          />
-        </View>
-
-        <Text style={styles.subtitulo}>Tipo de Movimiento</Text>
-        <View style={styles.contenedorTipoMov}>
-          <Pressable
-            style={[
-              styles.tipoMovBoton,
-              tipoMovimiento === "gasto" && styles.botonSeleccionado, //si tocamos se aplica el estilo
-            ]}
-            onPress={() => setTipoMovimiento("gasto")} //cuando tocamos cambiamos el estado
-          >
-            <Text style={styles.textoBotones}>Gasto</Text>
-          </Pressable>
-
-          <Pressable
-            style={[styles.tipoMovBoton, tipoMovimiento === "ingreso" && styles.botonSeleccionado]}
-            onPress={() => setTipoMovimiento("ingreso")}
-          >
-            <Text style={styles.textoBotones}> Ingreso</Text>
-          </Pressable>
-        </View>
-
-        <View>
-          <Text style={styles.subtitulo}>Categoría</Text>
-
-          {/* BOTÓN PARA ABRIR/CERRAR LAS CATEGORÍAS USANDO EL USESTATE DE ARRIBA */}
-          <Pressable
-            style={styles.botonCategoria}
-            onPress={() => {
-              if (mostrarCategorias === true) {
-                setMostrarCategorias(false);
-              } else {
-                setMostrarCategorias(true);
-              }
-            }}
-          >
-            <View style={styles.contenedorCategoria}>
-              {/* hay categoriaSeleccionada? SI → mostrar categoriaSeleccionada.imagen NO → mostrar "📂"*/}
-              <Text>{categoriaSeleccionada ? categoriaSeleccionada.imagen : "📂"}</Text>
-
-              <Text style={styles.textoCategoria}>
-                {categoriaSeleccionada ? categoriaSeleccionada.nombre : "Elegir categoría"}
-              </Text>
-            </View>
-
-            {/* name icono,mostrarCategorias ? "chevron-up"(si es true, si las muestra) : "chevron-down"(si es false)*/}
-            <Ionicons
-              name={mostrarCategorias ? "chevron-up" : "chevron-down"}
-              size={22}
-              color="#777"
+          <View>
+            <Text style={styles.subtitulo}>Monto</Text>
+            <TextInput
+              style={styles.contenedor}
+              placeholder="$0.00"
+              keyboardType="numeric"
+              value={monto}
+              onChangeText={setMonto}
             />
+          </View>
+
+          <Text style={styles.subtitulo}>Tipo de Movimiento</Text>
+          <View style={styles.contenedorTipoMov}>
+            <Pressable
+              style={[
+                styles.tipoMovBoton,
+                tipoMovimiento === "gasto" && styles.botonSeleccionado, //si tocamos se aplica el estilo
+              ]}
+              onPress={() => {
+                setTipoMovimiento("gasto");
+                setCategoriaSeleccionada(null);
+              }}
+            >
+              <Text style={styles.textoBotones}>Gasto</Text>
+            </Pressable>
+
+            <Pressable
+              style={[
+                styles.tipoMovBoton,
+                tipoMovimiento === "ingreso" && styles.botonSeleccionado,
+              ]}
+              onPress={() => {
+                setTipoMovimiento("ingreso");
+                setCategoriaSeleccionada(null);
+              }}
+            >
+              <Text style={styles.textoBotones}> Ingreso</Text>
+            </Pressable>
+          </View>
+
+          <View>
+            <Text style={styles.subtitulo}>Categoría</Text>
+            {/* BOTÓN PARA ABRIR/CERRAR LAS CATEGORÍAS USANDO EL USESTATE DE ARRIBA */}
+            <Pressable
+              style={styles.botonCategoria}
+              onPress={() => {
+                if (mostrarCategorias) {
+                  setMostrarCategorias(false);
+                } else {
+                  setMostrarCategorias(true);
+                }
+              }}
+            >
+              <View style={styles.contenedorCategoria}>
+                {/* hay categoriaSeleccionada? SI → mostrar categoriaSeleccionada.imagen NO → mostrar "📂"*/}
+                <Text>{categoriaSeleccionada ? categoriaSeleccionada.imagen : "📂"}</Text>
+                <Text style={styles.textoCategoria}>
+                  {categoriaSeleccionada ? categoriaSeleccionada.nombre : "Elegir categoría"}
+                </Text>
+              </View>
+
+              {/* name icono,mostrarCategorias ? "chevron-up"(si es true, si las muestra) : "chevron-down"(si es false)*/}
+              <Ionicons
+                name={mostrarCategorias ? "chevron-up" : "chevron-down"}
+                size={22}
+                color="#777"
+              />
+            </Pressable>
+
+            {/* LISTA DE CATEGORÍAS */}
+            {/* como el map recorre las cat, creamos un presable p cada una*/}
+            {mostrarCategorias && (
+              <View style={styles.listaCategorias}>
+                {categoriasFiltradas.map((categoria) => (
+                  <Pressable
+                    key={categoria.id}
+                    style={styles.itemCategoria}
+                    onPress={() => {
+                      guardaCategoria(categoria);
+                      setMostrarCategorias(false);
+                    }}
+                  >
+                    <View>
+                      <Text>{categoria.imagen}</Text>
+                      <Text style={styles.textoCategoria}>{categoria.nombre}</Text>
+                    </View>
+                  </Pressable>
+                ))}
+              </View>
+            )}
+          </View>
+
+          <View>
+            <Text style={styles.subtitulo}>Descripcion</Text>
+            <TextInput
+              style={styles.contenedor}
+              placeholder="Ingrese una Descripción"
+              value={descripcion}
+              onChangeText={setDescripcion}
+            />
+          </View>
+
+          <Pressable style={styles.botonAgregar} onPress={guardarTransaccion}>
+            <Text style={styles.textoAgregar}>AGREGAR</Text>
           </Pressable>
-
-          {/* LISTA DE CATEGORÍAS */}
-          {/* como el map recorre las cat, creamos un presable p cada una*/}
-          {mostrarCategorias && (
-            <View style={styles.listaCategorias}>
-              {categoriasFiltradas.map((categoria) => (
-                <Pressable
-                  key={categoria.id}
-                  style={styles.itemCategoria}
-
-                  onPress={() => {
-                    guardaCategoria(categoria);
-                    setMostrarCategorias(false);
-                  }}
-                >
-                  <View>
-                    <Text>{categoria.imagen}</Text>
-
-                    <Text style={styles.textoCategoria}>{categoria.nombre}</Text>
-                  </View>
-                </Pressable>
-              ))}
-            </View>
-          )}
         </View>
-
-        <View>
-          <Text style={styles.subtitulo}>Descripcion</Text>
-
-          <TextInput
-            style={styles.contenedor}
-            placeholder="Ingrese una Descripción"
-            value={descripcion}
-            onChangeText={setDescripcion}
-          />
-        </View>
-
-        <Pressable style={styles.botonAgregar} onPress={guardarTransaccion}>
-          <Text style={styles.textoAgregar}>AGREGAR</Text>
-        </Pressable>
-      </View>
-    </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 export default Agregar;
@@ -201,7 +227,6 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     padding: 10,
     margin: 10,
-    backgroundColor: "rgba(62, 176, 66, 0.15)",
     flexDirection: "row",
     justifyContent: "space-between",
   },
@@ -219,7 +244,7 @@ const styles = StyleSheet.create({
   botonSeleccionado: {
     backgroundColor: "#4CAF50",
     borderColor: "#010602",
-    borderWidth: 2,
+    borderWidth: 1,
   },
 
   textoBotones: {
@@ -277,5 +302,10 @@ const styles = StyleSheet.create({
     padding: 15,
     borderBottomWidth: 1,
     borderBottomColor: "#d0d0d0",
+  },
+
+  scrollContainer: {
+    flexGrow: 1,
+    paddingBottom: 140, // espacio extra al final para que el botón no quede pegado
   },
 });

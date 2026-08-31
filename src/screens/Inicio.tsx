@@ -44,13 +44,11 @@ const Inicio = ({ navigation }: any) => {
 
   // Mostrar solamente las últimas 5
   const transaccionesRecientes = [...transacciones] //Copiá todos los elementos de transacciones en una lista nueva
-    .reverse() //da vuelta el orden y se queda con los ultimos 5
-    .slice(0, 5);
+    .reverse() //da vuelta el orden y se queda con los ultimos 3
+    .slice(0, 3);
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Organizá tus gastos de forma simple y rápida</Text>
-
       <View style={styles.tarjetaGastos}>
         <Text style={styles.tituloBalance}>Balance</Text>
 
@@ -139,7 +137,9 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "black",
     textAlign: "left",
-    padding: 20,
+    paddingTop: 20,
+    paddingBottom: 20,
+    paddingLeft: 10,
   },
 });
 

@@ -1,15 +1,19 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet } from "react-native";
 import NavegadorApp from "./src/appNavigation/NavegadorApp";
 import { NavigationContainer } from "@react-navigation/native";
 import { TransaccionesProvider } from "./src/Context/TransaccionesContext";
+import React from "react";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 
 export default function App() {
   return (
-    <TransaccionesProvider>
-      <NavigationContainer>
-        <NavegadorApp />
-      </NavigationContainer>
-    </TransaccionesProvider>
+    <SafeAreaProvider>
+      <TransaccionesProvider>
+        <NavigationContainer>
+          <NavegadorApp />
+        </NavigationContainer>
+      </TransaccionesProvider>
+    </SafeAreaProvider>
   );
 }
 
