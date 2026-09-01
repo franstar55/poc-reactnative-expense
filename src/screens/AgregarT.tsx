@@ -133,10 +133,7 @@ const Agregar = () => {
           <Text style={styles.subtitulo}>Tipo de Movimiento</Text>
           <View style={styles.contenedorTipoMov}>
             <Pressable
-              style={[
-                styles.tipoMovBoton,
-                tipoMovimiento === "gasto" && styles.botonSeleccionado, 
-              ]}
+              style={[styles.tipoMovBoton, tipoMovimiento === "gasto" && styles.botonSeleccionado]}
               onPress={() => {
                 setTipoMovimiento("gasto");
                 setCategoriaSeleccionada(null);

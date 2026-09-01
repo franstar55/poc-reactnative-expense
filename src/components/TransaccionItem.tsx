@@ -27,7 +27,8 @@ const TransaccionItem = ({ item }: PropsTransaccionItem) => {
         <Text style={styles.fecha}>{item.fecha}</Text>
         <Pressable
           style={styles.edbutton}
-          onPress={() => navigation.navigate("Agregar", { transaccion: item })}>
+          onPress={() => navigation.navigate("Agregar", { transaccion: item })}
+        >
           <Text>Editar</Text>
         </Pressable>
       </View>
