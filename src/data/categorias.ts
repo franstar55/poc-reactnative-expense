@@ -1,6 +1,6 @@
 import { Categoria } from "../types/tipos";
 
-export const categorias: Categoria[] = [
+export const categoriasIniciales: Categoria[] = [
   {
     id: "comida",
     nombre: "Comida",

@@ -2,11 +2,15 @@ import React, { useContext } from "react";
 import { StyleSheet, Text, View, FlatList } from "react-native";
 import { Transaccion } from "../types/tipos";
 import { TransaccionesContext } from "../Context/TransaccionesContext";
+import { CategoriasContext } from "../Context/CategoriasContext";
+import { categoriasIniciales } from "../data/categorias";
 import TransaccionItem from "../components/TransaccionItem";
 import ListaVacia from "../components/ListaVacia";
 
 const Inicio = ({ navigation }: any) => {
   const context = useContext(TransaccionesContext); //context es el objeto que contiene las cosas que compartimos globalmente
+  const categoriasCtx = useContext(CategoriasContext);
+  const categorias = categoriasCtx?.categorias || categoriasIniciales;
 
   if (!context) {
     //Si no pude encontrar el Context, muestro error
@@ -20,8 +24,10 @@ const Inicio = ({ navigation }: any) => {
       //reduce sirve para recorrer una lista y obtener un Unico resultado
       (total, transaccion) => {
         //total objeto que vamos construyendo mientras recorremos las transacciones.
+        const cat = categorias.find((c) => c.id === transaccion.categoriaId);
+        const esIngreso = cat ? cat.tipo === "ingreso" : transaccion.tipoMovimiento === "ingreso";
 
-        if (transaccion.tipoMovimiento === "ingreso") {
+        if (esIngreso) {
           total.ingresos += transaccion.monto;
         } else {
           total.egresos += transaccion.monto;

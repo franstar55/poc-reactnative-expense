@@ -1,12 +1,36 @@
 import { StyleSheet } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Inicio from "../screens/Inicio";
 import Movimientos from "../screens/Movimientos";
-import Agregar from "../screens/AgregarT";
+import AgregarTransaccion from "../screens/AgregarT";
+import Ajustes from "../screens/Ajustes";
+import AgregarCategoria from "../screens/AgregarCategoria";
 import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-const Tabs = createBottomTabNavigator(); //crea navegador de pestañas inferiores
+const Tabs = createBottomTabNavigator(); // crea navegador de pestañas inferiores
+const AjustesStackNav = createNativeStackNavigator();
+
+function AjustesStack() {
+  return (
+    <AjustesStackNav.Navigator>
+      <AjustesStackNav.Screen
+        name="AjustesPrincipal"
+        component={Ajustes}
+        options={{ title: "Ajustes de Categorías", headerTitleAlign: "center" }}
+      />
+      <AjustesStackNav.Screen
+        name="AgregarCategoria"
+        component={AgregarCategoria}
+        options={({ route }: any) => ({
+          title: route.params?.categoria ? "Editar Categoría" : "Nueva Categoría",
+          headerTitleAlign: "center",
+        })}
+      />
+    </AjustesStackNav.Navigator>
+  );
+}
 
 function MyTabs() {
   const insets = useSafeAreaInsets(); // Obtiene el margen seguro del dispositivo
@@ -34,7 +58,7 @@ function MyTabs() {
 
       <Tabs.Screen
         name="Agregar"
-        component={Agregar}
+        component={AgregarTransaccion}
         options={{
           tabBarIcon: ({ color, size }) => <Ionicons name="add-circle" size={size} color={color} />,
         }}
@@ -45,6 +69,15 @@ function MyTabs() {
         component={Movimientos}
         options={{
           tabBarIcon: ({ color, size }) => <Ionicons name="list" size={size} color={color} />,
+        }}
+      />
+
+      <Tabs.Screen
+        name="Ajustes"
+        component={AjustesStack}
+        options={{
+          headerShown: false,
+          tabBarIcon: ({ color, size }) => <Ionicons name="settings" size={size} color={color} />,
         }}
       />
     </Tabs.Navigator>

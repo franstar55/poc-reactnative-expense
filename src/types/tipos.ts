@@ -5,6 +5,12 @@ export type Categoria = {
   imagen: string;
 };
 
+export type CategoriasContextType = {
+  categorias: Categoria[];
+  agregarCategoria: (categoria: Categoria) => void;
+  actualizarCategoria: (categoria: Categoria) => void;
+};
+
 export type TipoMovimiento = "gasto" | "ingreso";
 
 export type Transaccion = {

@@ -1,6 +1,7 @@
 import { StyleSheet } from "react-native";
 import NavegadorApp from "./src/appNavigation/NavegadorApp";
 import { NavigationContainer } from "@react-navigation/native";
+import { CategoriasProvider } from "./src/Context/CategoriasContext";
 import { TransaccionesProvider } from "./src/Context/TransaccionesContext";
 import React from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
@@ -8,11 +9,13 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 export default function App() {
   return (
     <SafeAreaProvider>
-      <TransaccionesProvider>
-        <NavigationContainer>
-          <NavegadorApp />
-        </NavigationContainer>
-      </TransaccionesProvider>
+      <CategoriasProvider>
+        <TransaccionesProvider>
+          <NavigationContainer>
+            <NavegadorApp />
+          </NavigationContainer>
+        </TransaccionesProvider>
+      </CategoriasProvider>
     </SafeAreaProvider>
   );
 }

@@ -1,15 +1,19 @@
 import { Pressable, StyleSheet, Text, View } from "react-native";
-import React from "react";
+import React, { useContext } from "react";
 import { PropsTransaccionItem } from "../types/tipos";
-import { categorias } from "../data/categorias";
+import { categoriasIniciales } from "../data/categorias";
+import { CategoriasContext } from "../Context/CategoriasContext";
 import { useNavigation } from "@react-navigation/native";
+import { Ionicons } from "@expo/vector-icons";
 
 //el archivo recibe una transacciónItem y decide cómo mostrarla
 
 //TransaccionItem recibe una prop llamada item
 const TransaccionItem = ({ item }: PropsTransaccionItem) => {
-  const categoria = categorias.find((categoria) => categoria.id === item.categoriaId);
-  const esIngreso = item.tipoMovimiento === "ingreso";
+  const categoriasCtx = useContext(CategoriasContext);
+  const categorias = categoriasCtx?.categorias || categoriasIniciales;
+  const categoria = categorias.find((c) => c.id === item.categoriaId);
+  const esIngreso = categoria ? categoria.tipo === "ingreso" : item.tipoMovimiento === "ingreso";
   const navigation = useNavigation<any>();
 
   return (
@@ -29,6 +33,7 @@ const TransaccionItem = ({ item }: PropsTransaccionItem) => {
           style={styles.edbutton}
           onPress={() => navigation.navigate("Agregar", { transaccion: item })}
         >
+          <Ionicons name="pencil" size={16} color="#333" />
           <Text>Editar</Text>
         </Pressable>
       </View>
@@ -71,6 +76,9 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   edbutton: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
     backgroundColor: "#95ffda",
     color: "#000",
     borderRadius: 8,

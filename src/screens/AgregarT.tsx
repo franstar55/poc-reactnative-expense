@@ -11,15 +11,18 @@ import {
 } from "react-native";
 import React, { useState, useEffect, useContext } from "react";
 import { Categoria, TipoMovimiento, Transaccion } from "../types/tipos";
-import { categorias } from "../data/categorias";
+import { categoriasIniciales } from "../data/categorias";
 import { Ionicons } from "@expo/vector-icons";
 import { TransaccionesContext } from "../Context/TransaccionesContext";
+import { CategoriasContext } from "../Context/CategoriasContext";
 import { useNavigation, useRoute } from "@react-navigation/native";
 
-const Agregar = () => {
+const AgregarTransaccion = () => {
   const navigation = useNavigation<any>();
   const route = useRoute<any>();
   const context = useContext(TransaccionesContext);
+  const categoriasCtx = useContext(CategoriasContext);
+  const categorias = categoriasCtx?.categorias || categoriasIniciales;
 
   // obtiene la transaccion a editar desde los parametros si es que existe
   const transaccionEdit = route.params?.transaccion;
@@ -43,14 +46,14 @@ const Agregar = () => {
       const cat = categorias.find((c) => c.id === transaccionEdit.categoriaId);
       setCategoriaSeleccionada(cat || null);
     }
-  }, [transaccionEdit]);
+  }, [transaccionEdit, categorias]);
 
   if (!context) {
     return <Text>Error: Context no disponible</Text>;
   }
 
   // obtiene la funcion para agregar y actualizar transacciones
-  const { agregarTransaccion, actualizarTransaccion } = context;
+  const { transacciones, agregarTransaccion, actualizarTransaccion } = context;
 
   const guardaCategoria = (categoria: Categoria) => {
     setCategoriaSeleccionada(categoria);
@@ -90,9 +93,14 @@ const Agregar = () => {
         descripcion,
       });
     } else {
-      // MODO CREACION
+      // MODO CREACION con ID secuencial
+      const maxId = transacciones.reduce((max, t) => {
+        const num = parseInt(t.id.replace(/\D/g, ""), 10);
+        return !isNaN(num) && num > max ? num : max;
+      }, transacciones.length);
+
       const nuevaTransaccion: Transaccion = {
-        id: Date.now().toString(),
+        id: (maxId + 1).toString(),
         tipoMovimiento: tipoMovimiento,
         monto: montoNumero,
         categoriaId: categoriaSeleccionada.id,
@@ -239,7 +247,7 @@ const Agregar = () => {
     </KeyboardAvoidingView>
   );
 };
-export default Agregar;
+export default AgregarTransaccion;
 
 const styles = StyleSheet.create({
   titulo: {
