@@ -7,16 +7,22 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
+  Alert,
 } from "react-native";
-import React, { useState, useContext } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Categoria, TipoMovimiento, Transaccion } from "../types/tipos";
 import { categorias } from "../data/categorias";
 import { Ionicons } from "@expo/vector-icons";
 import { TransaccionesContext } from "../Context/TransaccionesContext";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 
 const Agregar = () => {
   const navigation = useNavigation<any>();
+  const route = useRoute<any>();
+  const context = useContext(TransaccionesContext);
+
+  // obtiene la transaccion a editar desde los parametros si es que existe
+  const transaccionEdit = route.params?.transaccion;
 
   // datos de la transaccion
   const [monto, setMonto] = useState("");
@@ -27,13 +33,24 @@ const Agregar = () => {
   // lista de categorias; false => lista cerrada
   const [mostrarCategorias, setMostrarCategorias] = useState(false);
 
-  const context = useContext(TransaccionesContext); // accede a la info de TransaccionesContext
+  // precarga los datos si es una edicion (todos los hooks deben ejecutarse antes de cualquier return)
+  useEffect(() => {
+    if (transaccionEdit) {
+      setMonto(transaccionEdit.monto.toString());
+      setDescripcion(transaccionEdit.descripcion);
+      setTipoMovimiento(transaccionEdit.tipoMovimiento);
+
+      const cat = categorias.find((c) => c.id === transaccionEdit.categoriaId);
+      setCategoriaSeleccionada(cat || null);
+    }
+  }, [transaccionEdit]);
+
   if (!context) {
     return <Text>Error: Context no disponible</Text>;
   }
 
-  // obtiene la funcion para agregar una nueva transaccion
-  const { agregarTransaccion } = context;
+  // obtiene la funcion para agregar y actualizar transacciones
+  const { agregarTransaccion, actualizarTransaccion } = context;
 
   const guardaCategoria = (categoria: Categoria) => {
     setCategoriaSeleccionada(categoria);
@@ -41,32 +58,51 @@ const Agregar = () => {
 
   const categoriasFiltradas = categorias.filter((categoria) => categoria.tipo === tipoMovimiento);
 
-  const guardarTransaccion = () => {
-    const montoNumero = Number(monto);
-
-    // TODO: modales
-    if (Number.isNaN(montoNumero) || montoNumero <= 0) return;
-    if (!categoriaSeleccionada) return;
-
-    // crear nueva transaccion
-    const nuevaTransaccion: Transaccion = {
-      id: Date.now().toString(),
-      tipoMovimiento: tipoMovimiento,
-      monto: Number(monto),
-      categoriaId: categoriaSeleccionada.id,
-      descripcion: descripcion,
-      fecha: new Date().toISOString().split("T")[0],
-    };
-
-    agregarTransaccion(nuevaTransaccion); //guardamos la transaccion con la funcion del context
-
-    // resetera los campos
+  const resetFormulario = () => {
     setMonto("");
     setDescripcion("");
     setCategoriaSeleccionada(null);
     setTipoMovimiento("gasto");
     setMostrarCategorias(false);
+    navigation.setParams({ transaccion: undefined });
+  };
 
+  const guardarTransaccion = () => {
+    const montoNumero = Number(monto);
+
+    if (Number.isNaN(montoNumero) || montoNumero <= 0) {
+      Alert.alert("Monto inválido", "El monto debe ser mayor a 0.");
+      return;
+    }
+
+    if (!categoriaSeleccionada) {
+      Alert.alert("Categoría requerida", "La categoría es obligatoria.");
+      return;
+    }
+
+    if (transaccionEdit) {
+      // MODO EDICION mantiene id y fecha originales
+      actualizarTransaccion({
+        ...transaccionEdit,
+        monto: montoNumero,
+        tipoMovimiento,
+        categoriaId: categoriaSeleccionada.id,
+        descripcion,
+      });
+    } else {
+      // MODO CREACION
+      const nuevaTransaccion: Transaccion = {
+        id: Date.now().toString(),
+        tipoMovimiento: tipoMovimiento,
+        monto: montoNumero,
+        categoriaId: categoriaSeleccionada.id,
+        descripcion: descripcion,
+        fecha: new Date().toISOString().split("T")[0],
+      };
+      agregarTransaccion(nuevaTransaccion);
+    }
+
+    resetFormulario();
     navigation.navigate("Inicio");
   };
 
@@ -74,13 +110,13 @@ const Agregar = () => {
     <KeyboardAvoidingView
       style={{ flex: 1, backgroundColor: "#fff" }}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
-      keyboardVerticalOffset={Platform.OS === "ios" ? 90 : 80} // Compensa la barra de tabs y header
+      keyboardVerticalOffset={Platform.OS === "ios" ? 90 : 80} // compensa la barra de tabs y header
     >
       <ScrollView
         contentContainerStyle={styles.scrollContainer}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
-        automaticallyAdjustKeyboardInsets={true} // React Native moderno ajusta el scroll al foco
+        automaticallyAdjustKeyboardInsets={true} // ajusta el scroll al foco
       >
         <View>
           <View>
@@ -99,7 +135,7 @@ const Agregar = () => {
             <Pressable
               style={[
                 styles.tipoMovBoton,
-                tipoMovimiento === "gasto" && styles.botonSeleccionado, //si tocamos se aplica el estilo
+                tipoMovimiento === "gasto" && styles.botonSeleccionado, 
               ]}
               onPress={() => {
                 setTipoMovimiento("gasto");
@@ -153,7 +189,6 @@ const Agregar = () => {
             </Pressable>
 
             {/* LISTA DE CATEGORÍAS */}
-            {/* como el map recorre las cat, creamos un presable p cada una*/}
             {mostrarCategorias && (
               <View style={styles.listaCategorias}>
                 {categoriasFiltradas.map((categoria) => (
@@ -186,8 +221,22 @@ const Agregar = () => {
           </View>
 
           <Pressable style={styles.botonAgregar} onPress={guardarTransaccion}>
-            <Text style={styles.textoAgregar}>AGREGAR</Text>
+            <Text style={styles.textoAgregar}>
+              {transaccionEdit ? "GUARDAR CAMBIOS" : "AGREGAR"}
+            </Text>
           </Pressable>
+
+          {transaccionEdit && (
+            <Pressable
+              style={styles.botonCancelar}
+              onPress={() => {
+                resetFormulario();
+                navigation.navigate("Inicio");
+              }}
+            >
+              <Text style={styles.textoCancelar}>Cancelar edición</Text>
+            </Pressable>
+          )}
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
@@ -307,5 +356,16 @@ const styles = StyleSheet.create({
   scrollContainer: {
     flexGrow: 1,
     paddingBottom: 140, // espacio extra al final para que el botón no quede pegado
+  },
+  botonCancelar: {
+    padding: 12,
+    alignItems: "center",
+    marginHorizontal: 20,
+    marginTop: -10,
+  },
+  textoCancelar: {
+    color: "#888",
+    fontSize: 16,
+    fontWeight: "600",
   },
 });

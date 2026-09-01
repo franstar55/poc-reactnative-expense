@@ -2,6 +2,7 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 import React from "react";
 import { PropsTransaccionItem } from "../types/tipos";
 import { categorias } from "../data/categorias";
+import { useNavigation } from "@react-navigation/native";
 
 //el archivo recibe una transacciónItem y decide cómo mostrarla
 
@@ -9,6 +10,7 @@ import { categorias } from "../data/categorias";
 const TransaccionItem = ({ item }: PropsTransaccionItem) => {
   const categoria = categorias.find((categoria) => categoria.id === item.categoriaId);
   const esIngreso = item.tipoMovimiento === "ingreso";
+  const navigation = useNavigation<any>();
 
   return (
     <View style={styles.card}>
@@ -25,10 +27,7 @@ const TransaccionItem = ({ item }: PropsTransaccionItem) => {
         <Text style={styles.fecha}>{item.fecha}</Text>
         <Pressable
           style={styles.edbutton}
-          onPress={() => {
-            console.log(item.id);
-          }}
-        >
+          onPress={() => navigation.navigate("Agregar", { transaccion: item })}>
           <Text>Editar</Text>
         </Pressable>
       </View>

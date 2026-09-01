@@ -25,9 +25,8 @@ export type PropsTransaccionItem = {
   item: Transaccion;
 };
 
-//array de transacciones
-//una funcion que recibe (transaccion objeto) y no devuelve nada (void)
 export type TransaccionesContextType = {
   transacciones: Transaccion[];
   agregarTransaccion: (transaccion: Transaccion) => void;
+  actualizarTransaccion: (transaccion: Transaccion) => void;
 };

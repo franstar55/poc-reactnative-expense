@@ -16,11 +16,16 @@ export const TransaccionesProvider = ({ children }: { children: React.ReactNode 
     setTransacciones((prev) => [...prev, transaccion]);
   };
 
+  const actualizarTransaccion = (transaccion: Transaccion) => {
+    setTransacciones((prev) => prev.map((t) => (t.id === transaccion.id ? transaccion : t)));
+  };
+
   return (
     <TransaccionesContext.Provider
       value={{
         transacciones,
         agregarTransaccion,
+        actualizarTransaccion,
       }}
     >
       {children}
