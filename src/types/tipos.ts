@@ -35,4 +35,5 @@ export type TransaccionesContextType = {
   transacciones: Transaccion[];
   agregarTransaccion: (transaccion: Transaccion) => void;
   actualizarTransaccion: (transaccion: Transaccion) => void;
+  eliminarTransaccion: (id: string) => void;
 };

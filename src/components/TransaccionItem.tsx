@@ -1,9 +1,10 @@
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
 import React, { useContext } from "react";
 import { PropsTransaccionItem } from "../types/tipos";
 import { categoriasIniciales } from "../data/categorias";
 import { CategoriasContext } from "../Context/CategoriasContext";
 import { useNavigation } from "@react-navigation/native";
+import { TransaccionesContext } from "../Context/TransaccionesContext";
 import { Ionicons } from "@expo/vector-icons";
 
 //el archivo recibe una transacciónItem y decide cómo mostrarla
@@ -15,6 +16,11 @@ const TransaccionItem = ({ item }: PropsTransaccionItem) => {
   const categoria = categorias.find((c) => c.id === item.categoriaId);
   const esIngreso = categoria ? categoria.tipo === "ingreso" : item.tipoMovimiento === "ingreso";
   const navigation = useNavigation<any>();
+  const context = useContext(TransaccionesContext);
+  if (!context) {
+    return <Text>Error: Context no disponible</Text>; 
+  }
+  const { eliminarTransaccion } = context;
 
   return (
     <View style={styles.card}>
@@ -29,13 +35,34 @@ const TransaccionItem = ({ item }: PropsTransaccionItem) => {
       <Text style={styles.descripcion}>{item.descripcion}</Text>
       <View style={styles.barraInferior}>
         <Text style={styles.fecha}>{item.fecha}</Text>
-        <Pressable
-          style={styles.edbutton}
-          onPress={() => navigation.navigate("Agregar", { transaccion: item })}
-        >
-          <Ionicons name="pencil" size={16} color="#004d40" />
-          <Text style={styles.textoEditar}>Editar</Text>
-        </Pressable>
+        <View style={styles.botones}>
+          {/*BOTON EDITAR*/}
+          <Pressable
+            style={styles.edbutton}
+            onPress={() => navigation.navigate("Agregar", { transaccion: item })}
+          >
+            <Ionicons name="pencil" size={16} color="#004d40" />
+            <Text style={styles.textoEditar}>Editar</Text>
+          </Pressable>
+          {/*BOTON ELIMINAR*/}
+          <Pressable
+            style={styles.edbutton}
+            onPress={() => {
+              // Confirmación antes de eliminar
+              Alert.alert( 
+                "Confirmar eliminación",
+                "¿Estás seguro de que quieres eliminar esta transacción?",
+                [
+                  { text: "Cancelar", style: "cancel" },
+                  { text: "Eliminar", style: "destructive", onPress: () => eliminarTransaccion(item.id) }
+                ]
+              );
+            }}
+          >
+            <Ionicons name="trash" size={16} color="rgb(7, 7, 7)" />
+            <Text style={styles.textoEditar}>Eliminar</Text>
+          </Pressable>
+        </View>
       </View>
     </View>
   );
@@ -74,6 +101,10 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: "#999",
     marginTop: 4,
+  },
+  botones: {
+    flexDirection: "column",
+    gap: 15,
   },
   edbutton: {
     flexDirection: "row",

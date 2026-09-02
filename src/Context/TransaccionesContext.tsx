@@ -19,6 +19,10 @@ export const TransaccionesProvider = ({ children }: { children: React.ReactNode 
   const actualizarTransaccion = (transaccion: Transaccion) => {
     setTransacciones((prev) => prev.map((t) => (t.id === transaccion.id ? transaccion : t)));
   };
+  
+  const eliminarTransaccion = (id: string) => {
+    setTransacciones((tAnteriores) => tAnteriores.filter((t) => t.id !== id));
+  }
 
   return (
     <TransaccionesContext.Provider
@@ -26,6 +30,7 @@ export const TransaccionesProvider = ({ children }: { children: React.ReactNode 
         transacciones,
         agregarTransaccion,
         actualizarTransaccion,
+        eliminarTransaccion,
       }}
     >
       {children}

@@ -48,7 +48,7 @@ const Inicio = ({ navigation }: any) => {
   //getTotals devuelve un solo objeto, y ese objeto tiene 3 propiedades/valores
   const { balance, ingresos, egresos } = getTotals(); //aca las asigna a c/u a una var
 
-  // Mostrar solamente las últimas 5
+  // Mostrar solamente las últimas 3
   const transaccionesRecientes = [...transacciones] //Copiá todos los elementos de transacciones en una lista nueva
     .reverse() //da vuelta el orden y se queda con los ultimos 3
     .slice(0, 3);
