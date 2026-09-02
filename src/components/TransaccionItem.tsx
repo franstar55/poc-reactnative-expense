@@ -33,8 +33,8 @@ const TransaccionItem = ({ item }: PropsTransaccionItem) => {
           style={styles.edbutton}
           onPress={() => navigation.navigate("Agregar", { transaccion: item })}
         >
-          <Ionicons name="pencil" size={16} color="#333" />
-          <Text>Editar</Text>
+          <Ionicons name="pencil" size={16} color="#004d40" />
+          <Text style={styles.textoEditar}>Editar</Text>
         </Pressable>
       </View>
     </View>
@@ -80,10 +80,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 4,
     backgroundColor: "#95ffda",
-    color: "#000",
     borderRadius: 8,
-    paddingHorizontal: 6,
-    paddingVertical: 2,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+  },
+  textoEditar: {
+    fontSize: 13,
+    fontWeight: "600",
+    color: "#004d40",
   },
 });
 

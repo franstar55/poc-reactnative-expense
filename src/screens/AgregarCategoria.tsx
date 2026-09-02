@@ -112,7 +112,14 @@ const AgregarCategoria = () => {
               style={[styles.tipoMovBoton, tipoMovimiento === "gasto" && styles.botonSeleccionado]}
               onPress={() => setTipo("gasto")}
             >
-              <Text style={styles.textoBotones}>Gasto</Text>
+              <Text
+                style={[
+                  styles.textoBotones,
+                  tipoMovimiento === "gasto" && styles.textoBotonSeleccionado,
+                ]}
+              >
+                Gasto
+              </Text>
             </Pressable>
 
             <Pressable
@@ -122,7 +129,14 @@ const AgregarCategoria = () => {
               ]}
               onPress={() => setTipo("ingreso")}
             >
-              <Text style={styles.textoBotones}>Ingreso</Text>
+              <Text
+                style={[
+                  styles.textoBotones,
+                  tipoMovimiento === "ingreso" && styles.textoBotonSeleccionado,
+                ]}
+              >
+                Ingreso
+              </Text>
             </Pressable>
           </View>
 
@@ -131,6 +145,7 @@ const AgregarCategoria = () => {
           <TextInput
             style={styles.contenedor}
             placeholder="Ej. Supermercado, Gimnasio..."
+            placeholderTextColor="#888"
             value={nombre}
             onChangeText={setNombre}
           />
@@ -142,6 +157,7 @@ const AgregarCategoria = () => {
             <TextInput
               style={styles.inputEmoji}
               placeholder="O escribe un emoji..."
+              placeholderTextColor="#888"
               value={imagen}
               onChangeText={setImagen}
               maxLength={4}
@@ -198,6 +214,7 @@ const styles = StyleSheet.create({
     marginLeft: 15,
     paddingTop: 15,
     paddingBottom: 5,
+    color: "#111",
   },
   contenedor: {
     borderWidth: 1,
@@ -207,6 +224,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(62, 176, 66, 0.15)",
     fontSize: 18,
     margin: 10,
+    color: "#111",
   },
   contenedorTipoMov: {
     borderWidth: 1,
@@ -234,6 +252,10 @@ const styles = StyleSheet.create({
   textoBotones: {
     fontSize: 17,
     fontWeight: "bold",
+    color: "#333",
+  },
+  textoBotonSeleccionado: {
+    color: "#ffffff",
   },
   emojiPreviewContainer: {
     flexDirection: "row",
@@ -258,6 +280,7 @@ const styles = StyleSheet.create({
     padding: 15,
     backgroundColor: "rgba(62, 176, 66, 0.15)",
     fontSize: 16,
+    color: "#111",
   },
   subtituloSugerencias: {
     fontSize: 14,
@@ -300,7 +323,7 @@ const styles = StyleSheet.create({
     marginTop: 30,
   },
   textoAgregar: {
-    color: "white",
+    color: "#ffffff",
     fontSize: 18,
     fontWeight: "bold",
   },
@@ -311,7 +334,7 @@ const styles = StyleSheet.create({
     marginTop: -10,
   },
   textoCancelar: {
-    color: "#888",
+    color: "#666",
     fontSize: 16,
     fontWeight: "600",
   },

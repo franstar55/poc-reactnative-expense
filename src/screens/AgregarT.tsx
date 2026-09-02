@@ -132,6 +132,7 @@ const AgregarTransaccion = () => {
             <TextInput
               style={styles.contenedor}
               placeholder="$0.00"
+              placeholderTextColor="#888"
               keyboardType="numeric"
               value={monto}
               onChangeText={setMonto}
@@ -147,7 +148,14 @@ const AgregarTransaccion = () => {
                 setCategoriaSeleccionada(null);
               }}
             >
-              <Text style={styles.textoBotones}>Gasto</Text>
+              <Text
+                style={[
+                  styles.textoBotones,
+                  tipoMovimiento === "gasto" && styles.textoBotonSeleccionado,
+                ]}
+              >
+                Gasto
+              </Text>
             </Pressable>
 
             <Pressable
@@ -160,7 +168,14 @@ const AgregarTransaccion = () => {
                 setCategoriaSeleccionada(null);
               }}
             >
-              <Text style={styles.textoBotones}> Ingreso</Text>
+              <Text
+                style={[
+                  styles.textoBotones,
+                  tipoMovimiento === "ingreso" && styles.textoBotonSeleccionado,
+                ]}
+              >
+                Ingreso
+              </Text>
             </Pressable>
           </View>
 
@@ -205,9 +220,9 @@ const AgregarTransaccion = () => {
                       setMostrarCategorias(false);
                     }}
                   >
-                    <View>
-                      <Text>{categoria.imagen}</Text>
-                      <Text style={styles.textoCategoria}>{categoria.nombre}</Text>
+                    <View style={styles.contenedorCategoriaItem}>
+                      <Text style={styles.emojiCategoriaItem}>{categoria.imagen}</Text>
+                      <Text style={styles.textoCategoriaItem}>{categoria.nombre}</Text>
                     </View>
                   </Pressable>
                 ))}
@@ -216,10 +231,11 @@ const AgregarTransaccion = () => {
           </View>
 
           <View>
-            <Text style={styles.subtitulo}>Descripcion</Text>
+            <Text style={styles.subtitulo}>Descripción</Text>
             <TextInput
               style={styles.contenedor}
               placeholder="Ingrese una Descripción"
+              placeholderTextColor="#888"
               value={descripcion}
               onChangeText={setDescripcion}
             />
@@ -255,6 +271,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textAlign: "center",
     padding: 20,
+    color: "#111",
   },
 
   contenedor: {
@@ -265,6 +282,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(62, 176, 66, 0.15)",
     fontSize: 18,
     margin: 10,
+    color: "#111",
   },
 
   subtitulo: {
@@ -273,6 +291,7 @@ const styles = StyleSheet.create({
     textAlign: "left",
     marginLeft: 15,
     padding: 10,
+    color: "#111",
   },
 
   contenedorTipoMov: {
@@ -304,6 +323,11 @@ const styles = StyleSheet.create({
   textoBotones: {
     fontSize: 17,
     fontWeight: "bold",
+    color: "#333",
+  },
+
+  textoBotonSeleccionado: {
+    color: "#ffffff",
   },
 
   botonAgregar: {
@@ -316,7 +340,7 @@ const styles = StyleSheet.create({
   },
 
   textoAgregar: {
-    color: "white",
+    color: "#ffffff",
     fontSize: 18,
     fontWeight: "bold",
   },
@@ -340,6 +364,7 @@ const styles = StyleSheet.create({
 
   textoCategoria: {
     fontSize: 18,
+    color: "#111",
   },
 
   listaCategorias: {
@@ -358,6 +383,22 @@ const styles = StyleSheet.create({
     borderBottomColor: "#d0d0d0",
   },
 
+  contenedorCategoriaItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+  },
+
+  emojiCategoriaItem: {
+    fontSize: 20,
+  },
+
+  textoCategoriaItem: {
+    fontSize: 16,
+    color: "#222",
+    fontWeight: "500",
+  },
+
   scrollContainer: {
     flexGrow: 1,
     paddingBottom: 140, // espacio extra al final para que el botón no quede pegado
@@ -369,7 +410,7 @@ const styles = StyleSheet.create({
     marginTop: -10,
   },
   textoCancelar: {
-    color: "#888",
+    color: "#666",
     fontSize: 16,
     fontWeight: "600",
   },

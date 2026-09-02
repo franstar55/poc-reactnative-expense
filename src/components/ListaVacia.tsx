@@ -19,11 +19,14 @@ const ListaVacia = ({ titulo, mensaje }: PropsLista) => {
 const styles = StyleSheet.create({
   titulo: {
     fontSize: 18,
+    fontWeight: "bold",
+    color: "#222",
     textAlign: "center",
     padding: 5,
   },
   mensaje: {
-    fontSize: 18,
+    fontSize: 15,
+    color: "#666",
     textAlign: "center",
   },
 });

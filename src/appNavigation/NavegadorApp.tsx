@@ -14,7 +14,12 @@ const AjustesStackNav = createNativeStackNavigator();
 
 function AjustesStack() {
   return (
-    <AjustesStackNav.Navigator>
+    <AjustesStackNav.Navigator
+      screenOptions={{
+        headerStyle: { backgroundColor: "#ffffff" },
+        headerTintColor: "#111111",
+      }}
+    >
       <AjustesStackNav.Screen
         name="AjustesPrincipal"
         component={Ajustes}
@@ -38,10 +43,13 @@ function MyTabs() {
   return (
     <Tabs.Navigator
       screenOptions={{
+        headerStyle: { backgroundColor: "#ffffff" },
+        headerTintColor: "#111111",
         tabBarStyle: {
           height: 65 + insets.bottom, // Altura base + espacio de la barra de gestos
           paddingBottom: insets.bottom > 0 ? insets.bottom : 8,
           paddingTop: 8,
+          backgroundColor: "#ffffff",
         },
         tabBarActiveTintColor: "#4CAF50",
         tabBarInactiveTintColor: "#888",
