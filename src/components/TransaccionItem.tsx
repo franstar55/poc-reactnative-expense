@@ -18,7 +18,7 @@ const TransaccionItem = ({ item }: PropsTransaccionItem) => {
   const navigation = useNavigation<any>();
   const context = useContext(TransaccionesContext);
   if (!context) {
-    return <Text>Error: Context no disponible</Text>; 
+    return <Text>Error: Context no disponible</Text>;
   }
   const { eliminarTransaccion } = context;
 
@@ -49,12 +49,16 @@ const TransaccionItem = ({ item }: PropsTransaccionItem) => {
             style={styles.edbutton}
             onPress={() => {
               // Confirmación antes de eliminar
-              Alert.alert( 
+              Alert.alert(
                 "Confirmar eliminación",
                 "¿Estás seguro de que quieres eliminar esta transacción?",
                 [
                   { text: "Cancelar", style: "cancel" },
-                  { text: "Eliminar", style: "destructive", onPress: () => eliminarTransaccion(item.id) }
+                  {
+                    text: "Eliminar",
+                    style: "destructive",
+                    onPress: () => eliminarTransaccion(item.id),
+                  },
                 ]
               );
             }}
@@ -81,7 +85,9 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   barraInferior: {
+    marginTop: 7,
     flexDirection: "row",
+    alignItems: "center",
     justifyContent: "space-between",
   },
   categoria: {
@@ -103,7 +109,7 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   botones: {
-    flexDirection: "column",
+    flexDirection: "row",
     gap: 15,
   },
   edbutton: {
